@@ -20,14 +20,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.noteapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements NoteAdapter.OnTouchItem {
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
+    private int position;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new NoteAdapter();
+        adapter.setListener(this);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +55,13 @@ public class HomeFragment extends Fragment {
                 adapter.addNewOne(result.getString("text"));
             }
         });
+        getParentFragmentManager().setFragmentResultListener("rk_note1", getViewLifecycleOwner(), new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                adapter.getList().set(position, result.getString("text1"));
+                adapter.notifyItemChanged(position);
+            }
+        });
     }
 
     private void initList() {
@@ -63,5 +72,14 @@ public class HomeFragment extends Fragment {
     private void openNote() {
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigate(R.id.noteFragment);
+    }
+
+    @Override
+    public void click(String text, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putString("check", text);
+        getParentFragmentManager().setFragmentResult("check1", bundle);
+        this.position = position;
+        openNote();
     }
 }
