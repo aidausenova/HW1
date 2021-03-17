@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,9 +28,14 @@ NavController navController;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         initNavController(navView);
-        navController.navigate(R.id.boardFragment);
+        Prefs prefs = new Prefs(this);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            navController.navigate(R.id.phoneFragment);
+        }
+        if (!prefs.isShown()) {
+            navController.navigate(R.id.boardFragment);
+        }
     }
-
     private void initNavController(BottomNavigationView navView) {
         appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_profile)

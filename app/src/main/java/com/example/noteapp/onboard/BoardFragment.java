@@ -1,4 +1,4 @@
-package onboard;
+package com.example.noteapp.onboard;
 
 import android.os.Bundle;
 
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.noteapp.Prefs;
 import com.example.noteapp.R;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
@@ -60,6 +61,8 @@ public class BoardFragment extends Fragment {
     }
 
     private void close() {
+        Prefs prefs = new Prefs(requireContext());
+        prefs.saveInShown();
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigateUp();
     }

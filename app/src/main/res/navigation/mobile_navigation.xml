@@ -35,7 +35,13 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/boardFragment"
-        android:name="onboard.BoardFragment"
+        android:name="com.example.noteapp.onboard.BoardFragment"
         android:label="fragment_board"
         tools:layout="@layout/fragment_board" />
+    <fragment
+        android:id="@+id/phoneFragment"
+        android:name="com.example.noteapp.ui.auth.PhoneFragment"
+        android:label="fragment_phone"
+        tools:layout="@layout/fragment_phone" />
+
 </navigation>

@@ -1,4 +1,4 @@
-package onboard;
+package com.example.noteapp.onboard;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.noteapp.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -17,7 +18,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
     private String[] titels = new String[]{"Fast", "Free", "Powerful"};
     private String[] desc = new String[]{"🙁", "👩", "💃"};
-    private int[] images = new int[]{R.drawable.mood_24, R.drawable.yoga_24, R.drawable.smile_24};
+    private int[] images = new int[]{R.raw.loader,R.raw.ositiva, R.raw.silhouette};
     private OnStartClickListener listener;
 
     public interface OnStartClickListener {
@@ -55,7 +56,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
         private TextView textTitle, txtDesc;
         private Button btnStart;
-        private CircleImageView circleImageView;
+        private LottieAnimationView circleImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,7 +74,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
         public void bind(int position) {
             txtDesc.setText(desc[position]);
-            circleImageView.setImageResource(images[position]);
+            circleImageView.setAnimation(images[position]);
             textTitle.setText(titels[position]);
             if (position==2){
                 btnStart.setVisibility(View.VISIBLE);

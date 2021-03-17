@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.noteapp.App;
 import com.example.noteapp.R;
 
+import com.example.noteapp.models.Note;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class NoteFragment extends Fragment {
-    public boolean check = false;
+    private Note note;
     private EditText editText;
 
 
@@ -33,22 +37,23 @@ public class NoteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         editText = view.findViewById(R.id.edit_Text);
         Button btnSave = view.findViewById(R.id.btnSave);
-        getParentFragmentManager().setFragmentResultListener("check1", getViewLifecycleOwner(), new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                editText.setText(result.getString("check"));
-                check = true;
-            }
-        });
+        note = (Note) requireArguments().getSerializable("note");
+        if (note != null) editText.setText(note.getTitle());
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (check) {
-                    saveSecond();
+                String txt = editText.getText().toString().trim();
+                if (note == null) {
+                    note = new Note(txt);
+                    App.getDatabase().noteDao().insert(note);
                 } else {
-                    save();
+                    note.setTitle(txt);
+                    App.getDatabase().noteDao().update(note);
                 }
-                close();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("note", note);
+                getParentFragmentManager().setFragmentResult("rk_note", bundle);
+                //close();
             }
         });
     }
@@ -57,20 +62,7 @@ public class NoteFragment extends Fragment {
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigateUp();
     }
-
-    public void save() {
-        String text = editText.getText().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString("text", text);
-        getParentFragmentManager().setFragmentResult("rk_note", bundle);
-    }
-
-    public void saveSecond() {
-        String text = editText.getText().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString("text1", text);
-        getParentFragmentManager().setFragmentResult("rk_note1", bundle);
-    }
-
-
+//    private void saveToFirestore(Note note) {
+//        FirebaseFirestore.getInstance().collection("notes").add(note).addOnCanceledListener(
+//    }
 }

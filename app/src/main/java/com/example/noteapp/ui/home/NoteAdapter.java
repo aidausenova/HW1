@@ -11,18 +11,49 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.noteapp.App;
 import com.example.noteapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.noteapp.models.Note;
+
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private List<String> list;
+    private List<Note> list;
 
     private OnTouchItem item;
 
+    public void addItem(Note note) {
+        list.add(0, note);
+        notifyItemChanged(list.indexOf(0));
+    }
+
+    public Note getItem(int position) {
+        return list.get(position);
+    }
+
+    public void sortList(List<Note> sortAll) {
+        list.clear();
+        list.addAll(sortAll);
+        notifyDataSetChanged();
+    }
+
+    public void setList(List<Note> list) {
+        this.list.clear();
+        this.list.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        list.remove(position);
+        notifyDataSetChanged();
+    }
+
     public interface OnTouchItem {
-        void click(String text, int position);
+        void click(int position);
+
+        void longClick(int position);
     }
 
     public void setListener(OnTouchItem item) {
@@ -30,11 +61,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public NoteAdapter() {
-        list = new ArrayList<>();
+        list = new ArrayList<Note>();
     }
 
-    public List<String> getList() {
-        return list;
+    public void getList(int position, Note note) {
+        list.set(position, note);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -45,7 +77,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(position % 2 == 0) holder.itemView.setBackgroundColor(Color.YELLOW);
+        if (position % 2 == 0) holder.itemView.setBackgroundColor(Color.YELLOW);
         else holder.itemView.setBackgroundColor(Color.GREEN);
         holder.bind(list.get(position));
     }
@@ -53,11 +85,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    public void addNewOne(String text) {
-        list.add(0, text);
-        notifyItemChanged(0);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,32 +96,20 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    item.click(list.get(getAdapterPosition()), getAdapterPosition());
+                    item.click(getAdapterPosition());
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AlertDialog.Builder d = new AlertDialog.Builder(v.getRootView().getContext());
-                    d.setTitle("Delete?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            list.remove(getAdapterPosition());
-                            notifyItemRemoved(getAdapterPosition());
-                            notifyItemRangeChanged(getAdapterPosition(), list.size());
-                        }
-                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    }).show();
+                    item.longClick(getAdapterPosition());
                     return true;
                 }
             });
         }
 
-        public void bind(String s) {
-            textw.setText(s);
+        public void bind(Note note) {
+            textw.setText(note.getTitle());
         }
     }
 }
